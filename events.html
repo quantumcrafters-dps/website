@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - Quantum Crafters</title>
+    <link rel="icon" href="public/logo.png" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: 'hsl(222.2 84% 4.9%)',
+                        foreground: 'hsl(210 40% 98%)',
+                        muted: 'hsl(217.2 32.6% 17.5%)',
+                        'muted-foreground': 'hsl(215 20.2% 65.1%)',
+                        border: 'hsl(217.2 32.6% 17.5%)',
+                    }
+                }
+            }
+        }
+
+    </script>
+    <!-- jQuery here-->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <!-- Lucide Icons here -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- Fonts here-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --background: 240 10% 3.9%;
+            --foreground: 0 0% 98%;
+            --card: 240 10% 3.9%;
+            --card-foreground: 0 0% 98%;
+            --popover: 240 10% 3.9%;
+            --popover-foreground: 0 0% 98%;
+            --primary: 0 0% 98%;
+            --primary-foreground: 240 5.9% 10%;
+            --secondary: 240 3.7% 15.9%;
+            --secondary-foreground: 0 0% 98%;
+            --muted: 240 3.7% 15.9%;
+            --muted-foreground: 240 5% 64.9%;
+            --accent: 240 3.7% 15.9%;
+            --accent-foreground: 0 0% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 240 3.7% 15.9%;
+            --input: 240 3.7% 15.9%;
+            --ring: 240 4.9% 83.9%;
+            --radius: 0.5rem;
+        }
+        
+        .mobile-menu {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            width: 100%;
+            z-index: 40;
+            transform: translateY(-8px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 220ms ease, opacity 220ms ease;
+        }
+
+        .mobile-menu.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu>div {
+            background-color: hsl(var(--background) / 1);
+        }
+        .hover-plain:hover {
+            color: hsl(var(--foreground)) !important;
+        }
+        .hover-black-btn {
+            background-color: black;
+            color: white;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .hover-black-btn:hover {
+            background-color: #111;
+            color: white;
+        }
+        .hover-white-btn {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .hover-white-btn:hover {
+            background-color: hsl(var(--primary) / 0.85);
+           
+        }
+
+        body {
+            background: hsl(222.2 84% 4.9%);
+            color: hsl(210 40% 98%);
+        }
+        .mouse-gradient {
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                    rgba(59, 130, 246, 0.15),
+                    rgba(147, 51, 234, 0.1),
+                    transparent 40%);
+        }
+        .floating-gradient-1 {
+            animation: float1 20s ease-in-out infinite;
+        }
+
+        .floating-gradient-2 {
+            animation: float2 25s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(30px, -30px) rotate(120deg);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+        }
+
+        @keyframes float2 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            50% {
+                transform: translate(-40px, -20px) rotate(180deg);
+            }
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .fade-in-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .fade-in-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .fade-in-delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .fade-in-delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .glow-title {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            }
+
+            to {
+                text-shadow: 0 0 30px rgba(147, 51, 234, 0.8);
+            }
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ripple:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        :root {
+            --background: 240 10% 3.9%;
+            --foreground: 0 0% 98%;
+            --card: 240 10% 3.9%;
+            --card-foreground: 0 0% 98%;
+            --popover: 240 10% 3.9%;
+            --popover-foreground: 0 0% 98%;
+            --primary: 0 0% 98%;
+            --primary-foreground: 240 5.9% 10%;
+            --secondary: 240 3.7% 15.9%;
+            --secondary-foreground: 0 0% 98%;
+            --muted: 240 3.7% 15.9%;
+            --muted-foreground: 240 5% 64.9%;
+            --accent: 240 3.7% 15.9%;
+            --accent-foreground: 0 0% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 240 3.7% 15.9%;
+            --input: 240 3.7% 15.9%;
+            --ring: 240 4.9% 83.9%;
+            --radius: 0.5rem;
+        }
+
+        .mobile-menu {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            width: 100%;
+            z-index: 40;
+            transform: translateY(-8px);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 220ms ease, opacity 220ms ease;
+            
+        }
+
+        .mobile-menu.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu>div {
+            background-color: hsl(var(--background) / 1);
+           
+        }
+        .hover-plain:hover {
+            color: hsl(var(--foreground)) !important;
+        }
+
+       
+        .hover-black-btn {
+            background-color: black;
+            color: white;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .hover-black-btn:hover {
+            background-color: #111;
+            color: white;
+        }
+        .hover-white-btn {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .hover-white-btn:hover {
+            background-color: hsl(var(--primary) / 0.85);
+     
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .bg-background {
+            background-color: hsl(var(--background));
+        }
+
+        .text-foreground {
+            color: hsl(var(--foreground));
+        }
+
+        .text-muted-foreground {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .text-primary {
+            color: hsl(var(--primary));
+        }
+
+        .bg-primary {
+            background-color: hsl(var(--primary));
+        }
+
+        .text-primary-foreground {
+            color: hsl(var(--primary-foreground));
+        }
+
+        .border-border {
+            border-color: hsl(var(--border));
+        }
+
+        .bg-secondary {
+            background-color: hsl(var(--secondary));
+        }
+
+        .text-secondary-foreground {
+            color: hsl(var(--secondary-foreground));
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            border-radius: calc(var(--radius) - 2px);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            padding: 0.5rem 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-outline {
+            border: 1px solid hsl(var(--border));
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-outline:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+
+        .btn-ghost {
+            background-color: transparent;
+            color: hsl(var(--foreground));
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-ghost:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+
+        .btn-lg {
+            padding: 0.75rem 2rem;
+            font-size: 1rem;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            padding: 0;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to bottom right, hsl(var(--foreground)) 30%, hsl(var(--foreground) / 0.9), hsl(var(--foreground) / 0.7));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-title {
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% {
+                text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            }
+
+            100% {
+                text-shadow: 0 0 30px rgba(59, 130, 246, 0.5), 0 0 40px rgba(147, 51, 234, 0.3);
+            }
+        }
+
+        .mouse-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 30;
+            transition: opacity 0.3s;
+        }
+
+        .mobile-menu {
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .mobile-menu.open {
+            transform: translateY(0);
+        }
+
+        .member-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .member-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .floating-gradient {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .floating-gradient:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            width: 200px;
+            height: 200px;
+            background: rgba(59, 130, 246, 0.1);
+            animation-delay: 0s;
+        }
+
+        .floating-gradient:nth-child(2) {
+            top: 60%;
+            right: 10%;
+            width: 150px;
+            height: 150px;
+            background: rgba(147, 51, 234, 0.1);
+            animation-delay: 2s;
+        }
+
+        .floating-gradient:nth-child(3) {
+            bottom: 20%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background: rgba(236, 72, 153, 0.1);
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            33% {
+                transform: translateY(-20px) rotate(120deg);
+            }
+
+            66% {
+                transform: translateY(10px) rotate(240deg);
+            }
+        }
+
+        .stagger-animation {
+            animation-delay: var(--delay);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+        .floating-gradient-1 {
+            animation: float1 20s ease-in-out infinite;
+        }
+
+        .floating-gradient-2 {
+            animation: float2 25s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(30px, -30px) rotate(120deg);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+        }
+
+        @keyframes float2 {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            50% {
+                transform: translate(-40px, -20px) rotate(180deg);
+            }
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .fade-in-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .fade-in-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .fade-in-delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .fade-in-delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .glow-title {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            }
+
+            to {
+                text-shadow: 0 0 30px rgba(147, 51, 234, 0.8);
+            }
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .ripple:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="mouse-gradient absolute inset-0"></div>
+        <div class="absolute right-0 top-0 h-[500px] w-[500px] bg-blue-500/10 blur-[100px] floating-gradient-1"></div>
+        <div class="absolute bottom-0 left-0 h-[500px] w-[500px] bg-purple-500/10 blur-[100px] floating-gradient-2"></div>
+        <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+    </div>
+    <div class="relative z-10">
+        <nav class="sticky top-0 z-50 w-full border-b border-gray-400/20 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-screen-2xl">
+                <div class="flex h-16 items-center">
+                    <div class="flex items-center space-x-8">
+                        <a href="index.html" class="flex items-center space-x-3" id="homeLink">
+                            <img src="public/logo.png" alt="Quantum Crafters Logo" width="40" height="40" class="rounded-full">
+                            <span class="font-bold text-lg">Quantum Crafters</span>
+                        </a>
+                        <div class="hidden md:flex items-center space-x-4">
+                            <a href="members.html" class="text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Members</a>
+                            <a href="#" class="text-foreground bg-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Events</a>
+                            <a href="about.html" class="text-muted-foreground hover:text-foreground hover:bg-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">About Us</a>
+                        </div>
+                    </div>
+                    <div class="hidden md:flex items-center space-x-4 ml-auto">
+                        <a href="contact.html" class="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors">Contact</a>
+                        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=quantumcrafters6@gmail.com&su=Request%20to%20Join%20*Quantum%20Crafters*%2C%20IT%20Club.&body=Name%3A%0AClass%3A%0ASection%3A%0ARoll%20no.%3A" target="_blank" rel="noopener noreferrer" class="bg-white text-black hover:bg-gray-200 px-4 py-2 rounded-md text-sm font-medium transition-colors ripple">
+                            Join
+                        </a>
+
+                    </div>
+                    <div class="md:hidden ml-auto">
+                        <button type="button" class="mobile-menu-button text-muted-foreground hover:text-foreground focus:outline-none focus:text-foreground p-2" aria-controls="mobile-menu" aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            <div class="mobile-menu hidden md:hidden">
+                <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-background/95 backdrop-blur border-t border-border/40">
+                    <a href="members.html" class="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium transition-colors">Members</a>
+                    <a href="#" class="text-foreground bg-accent px-3 py-2 rounded-md text-sm font-medium transition-colors">Events</a>
+                    <a href="about.html" class="text-muted-foreground hover:text-foreground block px-3 py-2 rounded-md text-base font-medium transition-colors">About Us</a>
+                    <div class="pt-4 pb-3 border-t border-border/40">
+                        <div class="flex flex-col space-y-3 px-3">
+                            <a href="contact.html" class="text-muted-foreground hover:text-foreground block py-2 text-base font-medium transition-colors">Contact Us</a>
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to=quantumcrafters6@gmail.com&su=Request%20to%20Join%20*Quantum%20Crafters*%2C%20IT%20Club.&body=Name%3A%0AClass%3A%0ASection%3A%0ARoll%20no.%3A" target="_blank" rel="noopener noreferrer" class="bg-white text-black hover:bg-gray-200 px-4 py-2 rounded-md text-base font-medium transition-colors text-center ripple">
+                                Join
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <section class="container mx-auto px-4 py-20">
+            <div class="text-center space-y-4 fade-in" data-delay="0">
+                <h1 class="gradient-text hero-title text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
+                    Events & Activities
+                </h1>
+                <p class="mx-auto max-w-2xl text-lg text-muted-foreground">
+                    Join us for exciting hackathons, workshops, and learning opportunities that will enhance your coding journey.
+                </p>
+            </div>
+        </section>
+        <section id="hackathons" class="container mx-auto px-4 py-16">
+            <div class="text-center mb-12 fade-in fade-in-delay-1">
+                <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
+                    Hackathons
+                </h2>
+                <p class="text-lg text-gray-400">Compete, collaborate, and create amazing solutions</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto fade-in fade-in-delay-2">
+                <div class="border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-lg p-6 card-hover">
+                    <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+                        <div>
+                            <h3 class="text-2xl md:text-3xl font-bold text-blue-400 mb-2">
+                                ALGNITE: The CodeQuest
+                            </h3>
+                            <p class="text-lg text-gray-400">Our flagship programming competition</p>
+                        </div>
+                        <div class="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            22/08/2025
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Senior Group (Class 11 & 12)</h4>
+                                    <p class="text-gray-400">Programming Contest</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Junior Group (Class 9 & 10)</h4>
+                                    <p class="text-gray-400">AI & IT Quiz</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Team Size</h4>
+                                    <p class="text-gray-400">2 students per team</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-800/50 p-4 rounded-lg">
+                                <h4 class="font-semibold mb-2">Quiz Format:</h4>
+                                <p class="text-sm text-gray-400">Rapid-fire questions, tech puzzles, brain teasers</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="workshops" class="container mx-auto px-4 py-16">
+            <div class="text-center mb-12 fade-in fade-in-delay-1">
+                <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
+                    Workshops
+                </h2>
+                <p class="text-lg text-gray-400">Learn new skills and technologies through hands-on sessions</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto fade-in fade-in-delay-2">
+                <div class="border-2 border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-lg p-6 card-hover mb-10">
+                    <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+                        <div>
+                            <h3 class="text-2xl md:text-3xl font-bold text-purple-400 mb-2">
+                                Cyber Sentinels
+                            </h3>
+                            <p class="text-lg text-gray-400">Cyber-Security and Protection against Threats.</p>
+                        </div>
+                        <div class="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            20/08/2025
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">For Students</h4>
+                                    <p class="text-gray-400">Class 9th to 12th</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Duration</h4>
+                                    <p class="text-gray-400">1 Hour</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Venue</h4>
+                                    <p class="text-gray-400">Computer Lab</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-800/50 p-4 rounded-lg">
+                                <h4 class="font-semibold mb-2">Key Points:</h4>
+                                <p class="text-sm text-gray-400">
+                                    Learn Cyber Hygine, Hands-on Demos, Ethical Hacking Basics, and Interactive Quiz at the end of session!!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="border-2 border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-lg p-6 card-hover">
+                    <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+                        <div>
+                            <h3 class="text-2xl md:text-3xl font-bold text-purple-400 mb-2">
+                                Technology Workshop
+                            </h3>
+                            <p class="text-lg text-gray-400">Interactive learning session for students</p>
+                        </div>
+                        <div class="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            20/08/2025
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">For Students</h4>
+                                    <p class="text-gray-400">Class 9th to 12th</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Duration</h4>
+                                    <p class="text-gray-400">1 Hour</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Venue</h4>
+                                    <p class="text-gray-400">Computer Lab</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-800/50 p-4 rounded-lg">
+                                <h4 class="font-semibold mb-2">Organised by:</h4>
+                                <p class="text-sm text-gray-400">
+                                    Sipra Care Foundation in collaboration with Emancipation Edutech Private Limited
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="other_events" class="container mx-auto px-4 py-16">
+            <div class="text-center mb-12 fade-in fade-in-delay-1">
+                <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
+                    Other Events
+                </h2>
+                <p class="text-lg text-gray-400">Compete, collaborate, and create amazing solutions</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto fade-in fade-in-delay-2">
+                <div class="border-2 border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-purple-500/5 rounded-lg p-6 card-hover">
+                    <div class="flex items-center justify-between flex-wrap gap-4 mb-6">
+                        <div>
+                            <h3 class="text-2xl md:text-3xl font-bold text-blue-400 mb-2">
+                                Quantum Bits
+                            </h3>
+                            <p class="text-lg text-gray-400">Official Tech Newsletter Competition</p>
+                        </div>
+                        <div class="bg-gray-800 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            Till 05/09/2025
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Tech News</h4>
+                                    <p class="text-gray-400">Latest updates from the world of technology</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">Tech Topic</h4>
+                                    <p class="text-gray-400">Nanotechnology: The Future at the Smallest Scale</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                </svg>
+                                <div>
+                                    <h4 class="font-semibold text-lg">View more details on</h4>
+                                    <p class="text-gray-400">Quantum Crafters' official Whatsapp Channel</p>
+                                </div>
+                            </div>
+                            <div class="bg-gray-800/50 p-4 rounded-lg">
+                                <h4 class="font-semibold mb-2">Submit your entries to:</h4>
+                                <p class="text-sm text-gray-400">quantumcragters6@gmail.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="container mx-auto px-4 py-16">
+            <div class="text-center mb-12 fade-in fade-in-delay-1">
+                <h2 class="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent mb-4">
+                    Upcoming Events
+                </h2>
+                <p class="text-lg text-gray-400">More exciting activities and opportunities await</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                <div class="border border-green-500/20 bg-gradient-to-br from-green-500/5 to-blue-500/5 hover:border-green-500/40 transition-colors rounded-lg p-6 text-center card-hover fade-in fade-in-delay-2">
+                    <svg class="w-8 h-8 mx-auto mb-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path>
+                    </svg>
+                    <h3 class="font-semibold text-lg mb-2">Guest Lectures & Webinars</h3>
+                    <p class="text-sm text-gray-400">Learn from industry experts and professionals</p>
+                </div>
+
+                <div class="border border-blue-500/20 bg-gradient-to-br from-blue-500/5 to-purple-500/5 hover:border-blue-500/40 transition-colors rounded-lg p-6 text-center card-hover fade-in fade-in-delay-3">
+                    <svg class="w-8 h-8 mx-auto mb-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+                    </svg>
+                    <h3 class="font-semibold text-lg mb-2">Internal Hackathons</h3>
+                    <p class="text-sm text-gray-400">Regular coding competitions within the club</p>
+                </div>
+
+                <div class="border border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-pink-500/5 hover:border-purple-500/40 transition-colors rounded-lg p-6 text-center card-hover fade-in fade-in-delay-4">
+                    <svg class="w-8 h-8 mx-auto mb-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <h3 class="font-semibold text-lg mb-2">Research Paper Support</h3>
+                    <p class="text-sm text-gray-400">Guidance for academic research and publications</p>
+                </div>
+
+                <div class="border border-pink-500/20 bg-gradient-to-br from-pink-500/5 to-red-500/5 hover:border-pink-500/40 transition-colors rounded-lg p-6 text-center card-hover fade-in fade-in-delay-4">
+                    <svg class="w-8 h-8 mx-auto mb-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                    </svg>
+                    <h3 class="font-semibold text-lg mb-2">Club Magazine Initiative</h3>
+                    <p class="text-sm text-gray-400">Contribute to our digital publication</p>
+                </div>
+            </div>
+        </section>
+        <div class="relative border-t border-gray-400/20 bg-background/80 backdrop-blur-sm">
+            <footer class="border-t border-border">
+                <div class="container flex flex-col gap-8 py-8 md:flex-row md:py-12 mx-auto">
+                    <div class="flex-1 ml-12 space-y-4">
+                        <a href="index.html" class="flex items-center gap-3 group" id="footerHomeLink">
+                            <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Quantum%20Crafters%20Logo-5DTtsiUNydui8i7tA1SHClavjKLnOI.png" alt="Quantum Crafters Logo" width="48" height="48" class="transition-transform group-hover:scale-105 flex-shrink-0">
+                            <div class="min-w-0">
+                                <h2 class="font-bold group-hover:text-primary transition-colors">IT Club DPS Ranchi</h2>
+                                <p class="text-sm text-muted-foreground">Code. Create. Conquer.</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="grid flex-1 grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                        <div class="space-y-4">
+                            <h3 class="text-sm font-medium">Activities</h3>
+                            <ul class="space-y-3 text-sm">
+                                <li><a href="#hackathons" class="text-muted-foreground transition-colors hover:text-primary hover-plain">Hackathons</a></li>
+                                <li><a href="#workshops" class="text-muted-foreground transition-colors hover:text-primary hover-plain">Workshops</a></li>
+                                <li><a href="#other_events" class="text-muted-foreground transition-colors hover:text-primary hover-plain">Others</a></li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <h3 class="text-sm font-medium">Club</h3>
+                            <ul class="space-y-3 text-sm">
+                                <li><a href="members.html" class="text-muted-foreground transition-colors hover:text-primary hover-plain">Members</a></li>
+
+                                <li><a href="past-members.html" class="text-muted-foreground transition-colors hover:text-primary hover-plain">Past Members</a></li>
+                                <li><a href="admin.html" class="text-muted-foreground transition-colors hover:text-primary hover-plain">Admin Panel</a></li>
+                                <li><a href="#" class="text-muted-foreground transition-colors hover:text-primary hover-plain">Events</a></li>
+                                <li><a href="about.html" class="text-muted-foreground transition-colors hover:text-primary hover-plain">About Us</a></li>
+                            </ul>
+                        </div>
+                        <div class="space-y-4 sm:col-span-2 lg:col-span-1">
+                            <h3 class="text-sm font-medium">Connect</h3>
+                            <div class="flex space-x-4">
+                                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=quantumcrafters6@gmail.com" class="text-muted-foreground transition-colors hover:text-white" target="_blank" rel="noopener noreferrer">
+                                    <i data-lucide="mail" class="h-5 w-5"></i>
+                                    <span class="sr-only">Email</span>
+                                </a>
+                                <a href="https://whatsapp.com/channel/0029VbBeVqq9Bb5yIVHCSq2O" class="text-muted-foreground transition-colors hover:text-green-500" target="_blank" rel="noopener noreferrer">
+                                    <svg class="h-5 w-5" viewBox="0 0 512 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M255.999,512c-25.934,0-51.961-4.332-77.361-12.875c-7.966-2.68-12.251-11.309-9.571-19.274 c2.678-7.966,11.305-12.254,19.274-9.571c22.267,7.49,45.03,11.286,67.659,11.286c124.377,0,225.565-102.089,225.565-227.572 c0.002-123.271-101.637-223.56-226.568-223.56c-123.823,0-224.563,100.289-224.563,223.56c0,43.274,11.989,85.16,34.672,121.139 l5.913,8.87c2.442,3.666,3.179,8.211,2.015,12.46l-16.162,59.025l60.92-15.584c8.144-2.086,16.43,2.829,18.514,10.97 c2.083,8.143-2.829,16.431-10.97,18.514l-86.28,22.072c-5.253,1.344-10.821-0.208-14.622-4.074s-5.259-9.459-3.827-14.687 l21.243-77.585l-2.173-3.259c-0.068-0.103-0.137-0.208-0.204-0.315C13.65,350.655,0,303.091,0,253.994 c0-68.07,26.535-131.939,74.717-179.841C122.813,26.334,186.837,0,254.996,0c68.356,0,132.71,26.173,181.205,73.699 C485.081,121.6,512,185.63,512,253.992c0,68.482-26.824,133.176-75.532,182.162C387.837,485.064,323.745,512,255.999,512z" />
+                                        <path d="M399.217,353.076l4.634-15.273c1.482-4.351-0.274-10.09-4.532-12.685l-67.288-38.073 c-4.258-2.593-9.905-1.948-13.609,2.217l-30.747,33.223c-2.407,2.036-5.833,2.867-9.072,1.478 c-11.254-5.064-35.944-16.411-54.297-34.765l0.003-0.003c-0.254-0.25-0.501-0.501-0.753-0.75c-0.25-0.253-0.501-0.499-0.75-0.753 l-0.003,0.003c-19.138-19.138-29.702-43.043-34.765-54.297c-1.389-3.24-0.558-6.665,1.478-9.072l33.223-30.747 c4.165-3.704,4.81-9.352,2.217-13.609l-38.073-67.288c-2.593-4.258-8.334-6.014-12.685-4.532l-15.273,4.634 c-16.384,4.728-31.099,16.026-39.795,32.415c-10.545,21.018-14.054,45.922-2.564,76.283c19.287,51.196,45.82,86.259,66.758,107.196 c20.937,20.937,56,47.469,107.196,66.758c30.361,11.49,55.263,7.981,76.283-2.564C383.19,384.175,394.489,369.46,399.217,353.076z" />
+                                    </svg>
+                                    <span class="sr-only">WhatsApp</span>
+                                </a>
+                                <a href="https://www.instagram.com/quantum.crafters?igsh=ZWlhZDg0MDI3aGN3" class="text-muted-foreground transition-colors hover:text-fuchsia-500" target="_blank" rel="noopener noreferrer">
+                                    <i data-lucide="instagram" class="h-5 w-5"></i>
+                                    <span class="sr-only">Instagram</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container border-t border-border py-6 mx-auto">
+                    <p class="text-center text-sm text-muted-foreground">
+                        © <span id="currentYear"></span> IT Club, Delhi Public School Ranchi. All rights reserved.
+                    </p>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+     
+        lucide.createIcons();
+
+       
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        document.addEventListener('mousemove', (e) => {
+            const mouseGradient = document.querySelector('.mouse-gradient');
+            const x = (e.clientX / window.innerWidth) * 100;
+            const y = (e.clientY / window.innerHeight) * 100;
+
+            mouseGradient.style.setProperty('--mouse-x', x + '%');
+            mouseGradient.style.setProperty('--mouse-y', y + '%');
+        });
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+
+    </script>
+    <script>
+       
+        const mobileMenuToggle = document.querySelector('.mobile-menu-button');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        let isMobileMenuOpen = false;
+
+        if (mobileMenuToggle && mobileMenu) {
+            mobileMenuToggle.addEventListener('click', () => {
+                isMobileMenuOpen = !isMobileMenuOpen;
+
+      
+                mobileMenu.classList.toggle('hidden', !isMobileMenuOpen);
+                mobileMenu.classList.toggle('open', isMobileMenuOpen);
+
+         
+                mobileMenuToggle.setAttribute('aria-expanded', String(isMobileMenuOpen));
+                mobileMenu.setAttribute('aria-hidden', String(!isMobileMenuOpen));
+
+      
+                document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
+            });
+
+ 
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && isMobileMenuOpen) {
+                    isMobileMenuOpen = false;
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('open');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    mobileMenu.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                }
+            });
+
+ 
+            document.addEventListener('click', (e) => {
+                if (!isMobileMenuOpen) return;
+                if (!mobileMenu.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+                    isMobileMenuOpen = false;
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('open');
+                    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+                    mobileMenu.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>

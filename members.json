@@ -1,0 +1,102 @@
+{
+  "current_members": [
+    {
+      "id": "1773588931226",
+      "name": "Anuj Prakash",
+      "role": "Council Member",
+      "class": "12-G",
+      "year": "2026-27",
+      "image": "public/anuj-prakash-1773595233933.jpg"
+    }
+  ],
+  "past_members": [
+    {
+      "id": "12",
+      "name": "Utkersh Kumar",
+      "role": "Developer",
+      "class": "12-E",
+      "year": "2025-2026",
+      "image": "public/utkersh-kumar.png"
+    },
+    {
+      "id": "11",
+      "name": "Ashwin Raj",
+      "role": "Council Member",
+      "class": "12-I",
+      "year": "2025-2026",
+      "image": "public/ashwin-raj.png"
+    },
+    {
+      "id": "10",
+      "name": "Shrijan Prakash",
+      "role": "Council Member",
+      "class": "12-I",
+      "year": "2025-2026",
+      "image": "public/shrijan-prakash.png"
+    },
+    {
+      "id": "9",
+      "name": "Shivansh",
+      "role": "Council Member",
+      "class": "12-I",
+      "year": "2025-2026",
+      "image": "public/shivansh.png"
+    },
+    {
+      "id": "8",
+      "name": "Sachin Aditya Prakash",
+      "role": "Council Member",
+      "class": "12-I",
+      "year": "2025-2026",
+      "image": "public/sachin-aditya-prakash.png"
+    },
+    {
+      "id": "7",
+      "name": "Amogh",
+      "role": "Council Member",
+      "class": "12-I",
+      "year": "2025-2026",
+      "image": "public/amogh.png"
+    },
+    {
+      "id": "6",
+      "name": "Dev Padia",
+      "role": "Council Member",
+      "class": "12-I",
+      "year": "2025-2026",
+      "image": "public/dev-padia.png"
+    },
+    {
+      "id": "5",
+      "name": "Kavya Jain",
+      "role": "Council Member",
+      "class": "12-I",
+      "year": "2025-2026",
+      "image": "public/kavya-jain.png"
+    },
+    {
+      "id": "4",
+      "name": "Shreeja",
+      "role": "Council Member",
+      "class": "12-I",
+      "year": "2025-2026",
+      "image": "public/shreeja.png"
+    },
+    {
+      "id": "2",
+      "name": "Aayushman Bhardwaj",
+      "role": "Council Member",
+      "class": "12-I",
+      "year": "2025-2026",
+      "image": "public/aayushman-bhardwaj.png"
+    },
+    {
+      "id": "1",
+      "name": "Ankit Mohapatra",
+      "role": "President & Founder",
+      "class": "12-I",
+      "year": "2025-2026",
+      "image": "public/ankit-mohapatra.png"
+    }
+  ]
+}
