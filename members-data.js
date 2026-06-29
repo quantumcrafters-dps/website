@@ -5,7 +5,7 @@ window.MEMBERS_DATA = {
     {
       "id": "1773588931226",
       "name": "Anuj Prakash",
-      "role": "Council Member",
+      "role": "President",
       "class": "12-G",
       "year": "2026-27",
       "image": "public/anuj-prakash-1773595233933.jpg"
@@ -13,10 +13,42 @@ window.MEMBERS_DATA = {
     {
       "id": "1773674837523",
       "name": "Nabeel Jami",
-      "role": "Council Member",
+      "role": "Vice-President & Head of Tech",
       "class": "12-F",
       "year": "2026-27",
       "image": "public/nabeel-jami-1773674837182.jpg"
+    },
+    {
+      "id": "1777468344000",
+      "name": "Pranjal Sinha",
+      "role": "Vice-President",
+      "class": "12-F",
+      "year": "2026-27",
+      "image": "public/Pranjal.jpeg"
+    },
+    {
+      "id": "1777468355000",
+      "name": "Atharva Singh",
+      "role": "Head of Management",
+      "class": "12-F",
+      "year": "2026-27",
+      "image": "public/Atharva.jpeg"
+    },
+    {
+      "id": "1777468366000",
+      "name": "Pratiksha Bharadwaj",
+      "role": "Head of Graphics",
+      "class": "12-G",
+      "year": "2026-27",
+      "image": "public/Pratiksha.jpeg"
+    },
+    {
+      "id": "1777468377000",
+      "name": "Tanvi",
+      "role": "Head of PR & Social Media",
+      "class": "12-H",
+      "year": "2026-27",
+      "image": "public/Tanvi.jpeg"
     }
   ],
   "past_members": [
