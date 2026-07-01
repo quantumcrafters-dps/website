@@ -114,10 +114,11 @@ def rewrite_admin():
                         <div>
                                 <label class="block text-sm font-medium mb-1 text-muted-foreground">Department</label>
                                 <select id="member-department" required class="w-full px-4 py-2 bg-secondary/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground">
+                                <option value="Coordination Department">Coordination Department</option>
                                 <option value="Tech Department">Tech Department</option>
                                 <option value="Graphics Department">Graphics Department</option>
-                                <option value="Photography Department">Photography Department</option>
-                                <option value="Content Department">Content Department</option>
+                                <option value="Planning and Management Department">Planning and Management Department</option>
+                                <option value="Social Media Department">Social Media Department</option>
                               </select>
                         </div>
 
