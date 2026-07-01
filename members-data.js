@@ -29,7 +29,7 @@ window.MEMBERS_DATA = {
       "class": "12-F",
       "year": "2026-27",
       "department": "Coordination Department",
-      "is_head": true,
+      "is_head": false,
       "image": "public/pranjal-sinha-1782903697418.jpg"
     },
     {
