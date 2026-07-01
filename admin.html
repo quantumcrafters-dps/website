@@ -757,12 +757,12 @@
 
             // ---- Passcode Logic ----
             function checkPasscode() {
-            const code = document.getElementById('passcode').value;
+                const code = document.getElementById('passcode').value;
                 if (code === 'admin123' || code === 'quantum2026') {
                     document.getElementById('passcode-screen').classList.add('hidden');
                     document.getElementById('admin-dashboard').classList.remove('hidden');
                     document.title = 'Admin Dashboard - Quantum Crafters';
-                    fetchMembers(); // Grabs data from server.py safely
+                    fetchMembers();
                 } else {
                     document.getElementById('error-msg').classList.remove('hidden');
                 }
@@ -775,12 +775,9 @@
                 document.getElementById('error-msg').classList.add('hidden');
             }
 
-// Fixed Enter Key Listener
-document.getElementById('passcode').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-        checkPasscode();
-    }
-});
+            document.getElementById('passcode').addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') checkPasscode();
+            });
 
             // ---- API Data Logic ----
             async function fetchMembers() {
@@ -824,9 +821,7 @@ document.getElementById('passcode').addEventListener('keypress', function (e) {
                             </div>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                            `<button onclick="editMember('${m.id}', 'current')" class="text-blue-400 hover:text-blue-300">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>'
+                            <button onclick="editMember('current', '${m.id}')" class="px-2 py-1 bg-secondary hover:bg-secondary/70 rounded text-xs" title="Edit"><i data-lucide="edit-2" class="h-3.5 w-3.5"></i></button>
                             <button onclick="moveMember('${m.id}', 'current', 'past')" class="px-2 py-1 bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 rounded text-xs" title="Move to Past Members"><i data-lucide="arrow-right-circle" class="h-3.5 w-3.5"></i></button>
                             <button onclick="deleteMember('${m.id}', 'current')" class="px-2 py-1 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded text-xs" title="Delete"><i data-lucide="trash-2" class="h-3.5 w-3.5"></i></button>
                         </div>
@@ -845,9 +840,7 @@ document.getElementById('passcode').addEventListener('keypress', function (e) {
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                             <button onclick="moveMember('${m.id}', 'past', 'current')" class="px-2 py-1 bg-green-500/10 text-green-400 hover:bg-green-500/20 rounded text-xs" title="Restore to Current Members"><i data-lucide="rotate-ccw" class="h-3.5 w-3.5"></i></button>
-                            `<button onclick="editMember('${m.id}', 'past')" class="text-blue-400 hover:text-blue-300">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>`
+                            <button onclick="editMember('past', '${m.id}')" class="px-2 py-1 bg-secondary hover:bg-secondary/70 rounded text-xs" title="Edit"><i data-lucide="edit-2" class="h-3.5 w-3.5"></i></button>
                             <button onclick="deleteMember('${m.id}', 'past')" class="px-2 py-1 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded text-xs" title="Delete"><i data-lucide="trash-2" class="h-3.5 w-3.5"></i></button>
                         </div>
                     </div>
@@ -911,30 +904,26 @@ document.getElementById('passcode').addEventListener('keypress', function (e) {
             function editMember(listStr, id) {
                 const list = listStr === 'current' ? globalMembersData.current_members : globalMembersData.past_members;
                 const member = list.find(m => m.id === id);
-    
-                if (!member) return;
+                if(!member) return;
 
                 document.getElementById('edit-id').value = member.id;
                 document.getElementById('edit-list-type').value = listStr;
                 document.getElementById('modal-title').textContent = 'Edit Member Details';
-
-                document.getElementById('member-name').value = member.name || '';
-                document.getElementById('member-role').value = member.role || '';
-                document.getElementById('member-class').value = member.class || '';
-                document.getElementById('member-year').value = member.year || '';
-    
-                // Dropdown fields matching your new options seamlessly
-                document.getElementById('member-department').value = member.department || 'Coordination Department';
-                document.getElementById('member-is-head').checked = member.is_head || false;
-
-                if (member.image) {
+                
+                document.getElementById('member-name').value = member.name;
+                document.getElementById('member-role').value = member.role;
+                document.getElementById('member-class').value = member.class;
+                document.getElementById('member-year').value = member.year;
+                document.getElementById('member-department').value = m.department;
+                document.getElementById('member-is-head').checked = m.is_head;
+                
+                if(member.image) {
                     setDropzonePreview(member.image);
-                    document.getElementById('member-img').value = member.image;
+                    document.getElementById('member-img').value = member.image; // It's just a path string
                 } else {
                     clearDropzone();
                 }
 
-                // Opens the modal safely
                 document.getElementById('member-modal').classList.remove('hidden');
                 document.getElementById('member-modal').classList.add('flex');
             }
