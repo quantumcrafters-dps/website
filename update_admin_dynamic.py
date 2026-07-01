@@ -113,6 +113,20 @@ def update_admin():
                             <label class="block text-sm font-medium mb-1 text-muted-foreground">Image URL (Optional)</label>
                             <input type="text" id="new-img" class="w-full px-3 py-2 bg-secondary/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground" placeholder="public/image.png">
                         </div>
+                        <div>
+                          <label class="block text-sm font-medium mb-1 text-muted-foreground">Department</label>
+                          <select id="new-department" required class="w-full px-3 py-2 bg-secondary/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground">
+                            <option value="Tech Department">Tech Department</option>
+                            <option value="Graphics Department">Graphics Department</option>
+                            <option value="Photography Department">Photography Department</option>
+                            <option value="Content Department">Content Department</option>
+                          </select>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-1">
+                          <input type="checkbox" id="new-is-head" class="h-4 w-4 rounded border-border bg-secondary/50 text-primary focus:ring-primary">
+                          <label for="new-is-head" class="text-sm font-medium text-muted-foreground">Is this person the Department Head?</label>
+                        </div>
                         <button type="submit" id="save-btn" class="w-full py-3 mt-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors">Save Member</button>
                     </form>
                 </div>
@@ -252,27 +266,28 @@ def update_admin():
             }
 
             async function submitNewMember(e) {
-                e.preventDefault();
-                const btn = document.getElementById('save-btn');
-                btn.textContent = "Saving...";
-                btn.disabled = true;
-
-                const newMember = {
-                    id: Date.now().toString(),
-                    name: document.getElementById('new-name').value,
-                    role: document.getElementById('new-role').value,
-                    class: document.getElementById('new-class').value,
-                    year: document.getElementById('new-year').value,
-                    image: document.getElementById('new-img').value || ""
-                };
-
-                globalMembersData.current_members.push(newMember);
-                await saveToServer();
-                renderMembers();
-                
-                closeAddMemberModal();
-                btn.textContent = "Save Member";
-                btn.disabled = false;
+              e.preventDefault();
+              const btn = document.getElementById('save-btn');
+              btn.textContent = "Saving...";
+              btn.disabled = true;
+  
+              const newMember = {
+                id: Date.now().toString(),
+                name: document.getElementById('new-name').value,
+                role: document.getElementById('new-role').value,
+                class: document.getElementById('new-class').value,
+                year: document.getElementById('new-year').value,
+                department: document.getElementById('new-department').value,
+                is_head: document.getElementById('new-is-head').checked,
+                image: document.getElementById('new-img').value || ""
+              };
+  
+              globalMembersData.current_members.push(newMember);
+              await saveToServer();
+              renderMembers();
+              closeAddMemberModal();
+              btn.textContent = "Save Member";
+              btn.disabled = false;
             }
 
             async function moveToPast(id) {
