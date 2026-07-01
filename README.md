@@ -1,54 +1,39 @@
-# Quantum Crafters - IT Club DPS Ranchi
+# Quantum Crafters
 
-Welcome to the official repository for **Quantum Crafters**, the IT Club of Delhi Public School (DPS) Ranchi!
+Official website for Quantum Crafters, the IT Club of Delhi Public School, Ranchi.
 
-Quantum Crafters is a student-led club dedicated to innovation, tech learning, and hands-on experience in fields like AI, coding, and IoT to empower students to become future-ready innovators, problem solvers, and leaders in the field of technology.
+## Overview
 
-## 🚀 Features
+The site is a static front end with a lightweight Python API for member data. The admin panel edits the club roster, and the public pages render the current and past members from the generated data file.
 
-- **Modern & Responsive UI**: Built with Tailwind CSS and designed with sleek, dynamic styles.
-- **Dynamic Member Management**: Includes a custom-built Admin Panel to easily add, update, and manage current and past members.
-- **REST API Backend**: A lightweight Python HTTP server (`server.py`) powers the API endpoints to fetch and update member data dynamically.
-- **Interactive Pages**: Explore our home, about, events, contact, and dedicated member directories.
+## Tech Stack
 
-## 🛠️ Tech Stack
+- HTML5
+- Tailwind CSS
+- Vanilla JavaScript
+- jQuery
+- Lucide Icons
+- Python 3 `http.server`
 
-- **Frontend**: HTML5, Tailwind CSS, Vanilla JavaScript, jQuery, Lucide Icons
-- **Backend**: Python 3 (Standard `http.server` module)
-- **Data Storage**: Local JSON storage (`members.json`) bundled into static JS generation for high performance.
+## Key Files
 
-## 📂 Project Structure
+- `index.html`: Homepage.
+- `about.html`, `contact.html`, `events.html`: Informational pages.
+- `members.html`, `past-members.html`, `founding-committee.html`: Member listings.
+- `admin.html`: Admin panel for editing club members.
+- `server.py`: Local API server for `/api/members` and `/api/upload`.
+- `members.json`: Source data store.
+- `members-data.js`: Static data exported for file-based viewing.
+- `public/`: Static assets and uploaded images.
 
-- `index.html`: The main landing page.
-- `about.html`, `contact.html`, `events.html`: Pages providing details about the club's aims, activities, and contact info.
-- `members.html`, `past-members.html`, `founding-committee.html`: Member directories showing cards of IT Club members.
-- `admin.html`: Secure admin panel interface for updating the club's membership roster visually.
-- `server.py`: The backend Python script handling API requests and file uploads.
-- `members.json` & `members-data.js`: The JSON database and its exported JavaScript equivalent to feed the dynamic client pages.
-- `public/`: Directory containing uploaded images and static assets (e.g., logos).
-- `*.py` Helpers: Extra automation and maintenance scripts used during development (e.g., `update_admin_dynamic.py`, `update_footers.py`).
+## Run Locally
 
-## 🏃‍♂️ How to Run Locally
+1. Install Python 3.
+2. Open a terminal in the `website` folder.
+3. Run `python server.py`.
+4. Open `http://localhost:8000/index.html`.
 
-To get the website running fully on your local machine with the API server active:
+## Contact
 
-1. Ensure you have **Python 3** installed on your system.
-2. Open a terminal and navigate to the project directory:
-   ```bash
-   cd path/to/Quantum-Crafters/website
-   ```
-3. Start the backend server:
-   ```bash
-   python server.py
-   ```
-4. The server will launch on port `8000`. Open your web browser and visit:
-   ```text
-   http://localhost:8000/index.html
-   ```
-
-*(Note: While you can open the HTML files directly in a browser, running the Python server is necessary for the API endpoints—like fetching and updating members via the Admin Panel—to function properly.)*
-
-## 📱 Contact
-
-- **Email**: [quantumcrafters6@gmail.com](mailto:quantumcrafters6@gmail.com)
-- **Instagram**: [@quantum.crafters](https://www.instagram.com/quantum.crafters)
+- Email: [quantumcrafters6@gmail.com](mailto:quantumcrafters6@gmail.com)
+- Instagram: [@quantum.crafters](https://www.instagram.com/quantum.crafters)
