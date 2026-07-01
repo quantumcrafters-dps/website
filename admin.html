@@ -692,6 +692,21 @@
                                 <input type="text" id="member-year" required class="w-full px-4 py-2 bg-white border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-black placeholder:text-gray-400" placeholder="e.g. 2025-2026">
                             </div>
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-1 text-muted-foreground">Department</label>
+                            <select id="member-department" required class="w-full px-4 py-2 bg-white border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-black">
+                                <option value="Coordination Department">Coorodination Department</option>
+                                <option value="Tech Department">Tech Department</option>
+                                <option value="Graphics Department">Graphics Department</option>
+                                <option value="Planning and Management Department">Planning and Management Department</option>
+                                <option value="Social Media Department">Social Media Department</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-1">
+                            <input type="checkbox" id="member-is-head" class="h-4 w-4 rounded border-border bg-white text-primary focus:ring-primary">
+                            <label for="member-is-head" class="text-sm font-medium text-muted-foreground">Is this person the Department Head?</label>
+                        </div>
                         
                         <!-- Image Dropzone -->
                         <div>
@@ -899,6 +914,8 @@
                 document.getElementById('member-role').value = member.role;
                 document.getElementById('member-class').value = member.class;
                 document.getElementById('member-year').value = member.year;
+                document.getElementById('member-department').value = m.department;
+                document.getElementById('member-is-head').checked = m.is_head;
                 
                 if(member.image) {
                     setDropzonePreview(member.image);
@@ -952,6 +969,8 @@
                         member.role = document.getElementById('member-role').value;
                         member.class = document.getElementById('member-class').value;
                         member.year = document.getElementById('member-year').value;
+                        member.department = document.getElementById('member-department').value;
+                        member.is_head = document.getElementById('member-is-head').checked;
                         member.image = finalImagePath;
                     }
                 } else {
@@ -962,6 +981,8 @@
                         role: document.getElementById('member-role').value,
                         class: document.getElementById('member-class').value,
                         year: document.getElementById('member-year').value,
+                        department: document.getElementById('member-department').value,
+                        is_head: document.getElementById('member-is-head').checked,
                         image: finalImagePath
                     });
                 }
