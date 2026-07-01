@@ -10,7 +10,7 @@ window.MEMBERS_DATA = {
       "year": "2026-27",
       "department": "Coordination Department",
       "is_head": true,
-      "image": "public/anuj-prakash-1782903660289.jpg"
+      "image": "public/anuj-prakash-1773595233933.jpg"
     },
     {
       "id": "1782903673754",
@@ -20,7 +20,7 @@ window.MEMBERS_DATA = {
       "year": "2026-27",
       "department": "Tech Department",
       "is_head": true,
-      "image": "public/nabeel-jami-1782903673746.jpg"
+      "image": "public/nabeel-jami-1773674837182.jpg"
     },
     {
       "id": "1782903697424",
@@ -30,7 +30,7 @@ window.MEMBERS_DATA = {
       "year": "2026-27",
       "department": "Coordination Department",
       "is_head": false,
-      "image": "public/pranjal-sinha-1782903697418.jpg"
+      "image": "public/Pranjal.jpeg"
     },
     {
       "id": "1782903722008",
@@ -40,7 +40,7 @@ window.MEMBERS_DATA = {
       "year": "2026-27",
       "department": "Planning and Management Department",
       "is_head": true,
-      "image": "public/atharva-singh-1782903721949.jpg"
+      "image": "public/Atharva.jpeg"
     },
     {
       "id": "1782903740405",
@@ -50,7 +50,7 @@ window.MEMBERS_DATA = {
       "year": "2026-27",
       "department": "Graphics Department",
       "is_head": true,
-      "image": "public/pratiksha-bharadwaj-1782903740396.jpg"
+      "image": "public/Pratiksha.jpeg"
     },
     {
       "id": "1782903758502",
@@ -60,7 +60,7 @@ window.MEMBERS_DATA = {
       "year": "2026-27",
       "department": "Social Media Department",
       "is_head": true,
-      "image": "public/tanvi-1782903758496.jpg"
+      "image": "public/Tanvi.jpeg"
     }
   ],
   "past_members": [
