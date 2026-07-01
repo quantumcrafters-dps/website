@@ -3,52 +3,64 @@
 window.MEMBERS_DATA = {
   "current_members": [
     {
-      "id": "1773588931226",
+      "id": "1782903660616",
       "name": "Anuj Prakash",
       "role": "President",
       "class": "12-G",
       "year": "2026-27",
-      "image": "public/anuj-prakash-1773595233933.jpg"
+      "department": "Coordination Department",
+      "is_head": true,
+      "image": "public/anuj-prakash-1782903660289.jpg"
     },
     {
-      "id": "1773674837523",
+      "id": "1782903673754",
       "name": "Nabeel Jami",
-      "role": "Vice-President & Head of Tech",
+      "role": "Vice-President",
       "class": "12-F",
       "year": "2026-27",
-      "image": "public/nabeel-jami-1773674837182.jpg"
+      "department": "Tech Department",
+      "is_head": true,
+      "image": "public/nabeel-jami-1782903673746.jpg"
     },
     {
-      "id": "1777468344000",
+      "id": "1782903697424",
       "name": "Pranjal Sinha",
       "role": "Vice-President",
       "class": "12-F",
       "year": "2026-27",
-      "image": "public/Pranjal.jpeg"
+      "department": "Coordination Department",
+      "is_head": true,
+      "image": "public/pranjal-sinha-1782903697418.jpg"
     },
     {
-      "id": "1777468355000",
+      "id": "1782903722008",
       "name": "Atharva Singh",
       "role": "Head of Management",
       "class": "12-F",
       "year": "2026-27",
-      "image": "public/Atharva.jpeg"
+      "department": "Planning and Management Department",
+      "is_head": true,
+      "image": "public/atharva-singh-1782903721949.jpg"
     },
     {
-      "id": "1777468366000",
+      "id": "1782903740405",
       "name": "Pratiksha Bharadwaj",
       "role": "Head of Graphics",
       "class": "12-G",
       "year": "2026-27",
-      "image": "public/Pratiksha.jpeg"
+      "department": "Graphics Department",
+      "is_head": true,
+      "image": "public/pratiksha-bharadwaj-1782903740396.jpg"
     },
     {
-      "id": "1777468377000",
+      "id": "1782903758502",
       "name": "Tanvi",
       "role": "Head of PR & Social Media",
       "class": "12-H",
       "year": "2026-27",
-      "image": "public/Tanvi.jpeg"
+      "department": "Social Media Department",
+      "is_head": true,
+      "image": "public/tanvi-1782903758496.jpg"
     }
   ],
   "past_members": [
