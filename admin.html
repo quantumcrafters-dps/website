@@ -757,12 +757,12 @@
 
             // ---- Passcode Logic ----
             function checkPasscode() {
-                const code = document.getElementById('passcode').value;
+            const code = document.getElementById('passcode').value;
                 if (code === 'admin123' || code === 'quantum2026') {
                     document.getElementById('passcode-screen').classList.add('hidden');
                     document.getElementById('admin-dashboard').classList.remove('hidden');
                     document.title = 'Admin Dashboard - Quantum Crafters';
-                    fetchMembers();
+                    fetchMembers(); // Grabs data from server.py safely
                 } else {
                     document.getElementById('error-msg').classList.remove('hidden');
                 }
@@ -775,9 +775,12 @@
                 document.getElementById('error-msg').classList.add('hidden');
             }
 
-            document.getElementById('passcode').addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') checkPasscode();
-            });
+// Fixed Enter Key Listener
+document.getElementById('passcode').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        checkPasscode();
+    }
+});
 
             // ---- API Data Logic ----
             async function fetchMembers() {
@@ -908,27 +911,30 @@
             function editMember(listStr, id) {
                 const list = listStr === 'current' ? globalMembersData.current_members : globalMembersData.past_members;
                 const member = list.find(m => m.id === id);
-                if(!member) return;
+    
+                if (!member) return;
 
                 document.getElementById('edit-id').value = member.id;
                 document.getElementById('edit-list-type').value = listStr;
                 document.getElementById('modal-title').textContent = 'Edit Member Details';
-                
-                document.getElementById('member-name').value = member.name;
-                document.getElementById('member-role').value = member.role;
-                document.getElementById('member-class').value = member.class;
-                document.getElementById('member-year').value = member.year;
-                document.getElementById('member-department').value = m.department;
-                document.getElementById('member-is-head').checked = m.is_head;
-                document.getElementById('member-modal').classList.remove('hidden');
-                
-                if(member.image) {
+
+                document.getElementById('member-name').value = member.name || '';
+                document.getElementById('member-role').value = member.role || '';
+                document.getElementById('member-class').value = member.class || '';
+                document.getElementById('member-year').value = member.year || '';
+    
+                // Dropdown fields matching your new options seamlessly
+                document.getElementById('member-department').value = member.department || 'Coordination Department';
+                document.getElementById('member-is-head').checked = member.is_head || false;
+
+                if (member.image) {
                     setDropzonePreview(member.image);
-                    document.getElementById('member-img').value = member.image; // It's just a path string
+                    document.getElementById('member-img').value = member.image;
                 } else {
                     clearDropzone();
                 }
 
+                // Opens the modal safely
                 document.getElementById('member-modal').classList.remove('hidden');
                 document.getElementById('member-modal').classList.add('flex');
             }
