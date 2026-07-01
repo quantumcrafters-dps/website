@@ -489,46 +489,103 @@
                 Our Departments
               </h1>
               <p id="page-subtitle" class="mx-auto max-w-2xl text-lg text-muted-foreground">
-                Click a department to see its team members.
+                                Browse the club leadership and department teams below.
               </p>
-              <button id="back-to-depts" class="hidden px-4 py-2 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-lg transition-colors mt-4">← Back to Departments</button>
             </div>
 
-            <!-- VIEW A: The main grid showing all department options -->
-            <div id="departments-grid" class="mx-auto grid max-w-6xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <!-- JavaScript will dynamically inject the department boxes here -->
-            </div>
+                        <div id="club-leadership-section" class="mx-auto max-w-6xl mb-12 hidden">
+                            <div class="text-center mb-6">
+                                <span class="inline-block px-4 py-1.5 bg-primary/10 text-primary font-bold rounded-full text-sm border border-primary/20 mb-4 tracking-wider">CLUB LEADERSHIP</span>
+                                <p class="text-sm text-muted-foreground">President and Vice President, along with any general club members assigned to the leadership group.</p>
+                            </div>
+                            <div id="club-leadership-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"></div>
+                        </div>
 
-            <!-- VIEW B: Inside a Single Department (hidden by default) -->
-            <div id="single-department-view" class="hidden max-w-6xl mx-auto space-y-12">
-              <!-- Department Head Section -->
-              <div class="text-center">
-                <span class="inline-block px-4 py-1.5 bg-primary/10 text-primary font-bold rounded-full text-sm border border-primary/20 mb-6 tracking-wider">DEPARTMENT HEAD</span>
-                <div id="dept-head-container" class="flex justify-center"></div>
-              </div>
-      
-              <hr class="border-border/40 max-w-xl mx-auto">
-
-              <!-- Regular Members Section -->
-              <div>
-                <h2 class="text-center text-xl font-semibold text-muted-foreground mb-8">Team Members</h2>
-                <div id="dept-members-grid" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"></div>
-              </div>
+                        <!-- Departments list -->
+                        <div id="departments-list" class="mx-auto max-w-6xl space-y-14">
+                            <!-- JavaScript will dynamically inject the department groups here -->
             </div>
           </section>
         
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-              // Grab our elements
-              const deptsGrid = document.getElementById('departments-grid');
-              const singleDeptView = document.getElementById('single-department-view');
-              const headContainer = document.getElementById('dept-head-container');
-              const membersGrid = document.getElementById('dept-members-grid');
-              const pageTitle = document.getElementById('page-title');
-              const pageSubtitle = document.getElementById('page-subtitle');
-              const backBtn = document.getElementById('back-to-depts');
+                            const departmentsList = document.getElementById('departments-list');
+              const leadershipSection = document.getElementById('club-leadership-section');
+              const leadershipGrid = document.getElementById('club-leadership-grid');
       
               const _defImg = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg fill="#999" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 15.503A5.041 5.041 0 1 0 16 5.42a5.041 5.041 0 0 0 0 10.083zm0 2.215c-6.703 0-11 3.699-11 5.5v3.363h22v-3.363c0-2.178-4.068-5.5-11-5.5z"/></svg>');
+
+                            function normalizeDepartment(department) {
+                                if (!department || department === 'none' || department === 'Coordination Department') return '';
+                                return department;
+                            }
+
+                            function getMemberLabel(member) {
+                                const labels = [];
+                                const legacyRole = (member.role || '').toLowerCase();
+                                const clubRole = member.club_role || (legacyRole.includes('vice-president') ? 'vice-president' : legacyRole.includes('president') ? 'president' : 'none');
+
+                                if (clubRole === 'president') labels.push('President');
+                                if (clubRole === 'vice-president') labels.push('Vice President');
+
+                                const department = normalizeDepartment(member.department);
+                                if (department) {
+                                    labels.push(member.is_head ? `Head of ${department}` : department);
+                                }
+
+                                return labels.join(' • ');
+                            }
+
+                            function isClubLeader(member) {
+                                const legacyRole = (member.role || '').toLowerCase();
+                                return member.club_role === 'president' || member.club_role === 'vice-president' || legacyRole.includes('vice-president') || legacyRole.includes('president');
+                            }
+
+                            function generateMemberCardHTML(member) {
+                                const label = getMemberLabel(member);
+                                return `
+                                        <div class="member-card relative overflow-hidden rounded-lg border border-primary/20 bg-background p-6 shadow-lg shadow-blue-500/10">
+                                            <div class="flex items-center gap-4">
+                                                <img src="${member.image || _defImg}" alt="${member.name}" class="h-16 w-16 rounded-full object-cover border-2 border-primary/30" onerror="this.src=_defImg">
+                                                <div class="text-left">
+                                                    <h3 class="font-bold text-lg text-foreground">${member.name}</h3>
+                                                    ${label ? `<p class="text-sm font-medium text-primary">${label}</p>` : ''}
+                                                    <p class="text-sm text-muted-foreground">Class: ${member.class}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                            }
+
+                            function generateDepartmentSectionHTML(deptName, dept) {
+                                const headCard = dept.head ? generateMemberCardHTML(dept.head) : '<p class="text-muted-foreground text-center py-6">No Department Head assigned yet.</p>';
+                                const memberCards = dept.members.length
+                                    ? dept.members.map(member => generateMemberCardHTML(member)).join('')
+                                    : '<p class="text-muted-foreground text-center py-6">No members assigned yet.</p>';
+
+                                return `
+                                    <section class="space-y-6">
+                                        <div class="text-center space-y-2">
+                                            <!--<span class="inline-block px-4 py-1.5 bg-primary/10 text-primary font-bold rounded-full text-sm border border-primary/20 tracking-wider">DEPARTMENT</span>-->
+                                            <h2 class="text-3xl font-bold text-foreground">${deptName}</h2>
+                                        </div>
+
+                                        <div class="space-y-4">
+                                            <div class="text-center">
+                                                <span class="inline-block px-4 py-1.5 bg-primary/10 text-primary font-bold rounded-full text-sm border border-primary/20 mb-4 tracking-wider">DEPARTMENT HEAD</span>
+                                                <div class="flex justify-center">${headCard}</div>
+                                            </div>
+
+                                            <hr class="border-border/40 max-w-xl mx-auto">
+
+                                            <div>
+                                                <h3 class="text-center text-xl font-semibold text-muted-foreground mb-8">Team Members</h3>
+                                                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">${memberCards}</div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                `;
+                            }
 
               try {
                 const data = window.MEMBERS_DATA;
@@ -536,14 +593,16 @@
                 const rawMembers = data.current_members || [];
 
                 if (rawMembers.length === 0) {
-                  deptsGrid.innerHTML = '<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-12 text-muted-foreground">No members found.</div>';
+                                    departmentsList.innerHTML = '<div class="text-center py-12 text-muted-foreground">No members found.</div>';
                   return;
                 }
 
-                // Group the members array by department dynamically!
+                                // Group the members array by department dynamically!
                 const departments = {};
+                                const clubLeadership = rawMembers.filter(isClubLeader);
                 rawMembers.forEach(m => {
-                  const dName = m.department || "General Members";
+                                    const dName = normalizeDepartment(m.department);
+                                    if (!dName) return;
                   if (!departments[dName]) {
                     departments[dName] = { head: null, members: [] };
                   }
@@ -554,80 +613,20 @@
                   }
                 });
 
-                // Function 1: Render the Department selection buttons
-                function showDepartmentsList() {
-                  pageTitle.textContent = "Our Departments";
-                  pageSubtitle.textContent = "Click a department to see its team members.";
-                  backBtn.classList.add('hidden');
-                  singleDeptView.classList.add('hidden');
-                  deptsGrid.classList.remove('hidden');
+                                const orderedDepartments = Object.entries(departments).sort(([a], [b]) => a.localeCompare(b));
 
-                  let html = '';
-                  Object.keys(departments).forEach(deptName => {
-                    html += `
-                      <div class="dept-select-card cursor-pointer relative overflow-hidden rounded-lg border border-primary/20 bg-background p-8 hover:shadow-lg text-center transition-all shadow-lg shadow-blue-500/10" data-dept="${deptName}">
-                        <h3 class="font-bold text-2xl mb-2">${deptName}</h3>
-                        <p class="text-sm text-primary font-medium">View Team Members →</p>
-                      </div>
-                    `;
-                  });
-                  deptsGrid.innerHTML = html;
+                                leadershipSection.classList.toggle('hidden', clubLeadership.length === 0);
+                                leadershipGrid.innerHTML = clubLeadership.length
+                                    ? clubLeadership.map(m => generateMemberCardHTML(m)).join('')
+                                    : '';
 
-                  // Hook up click behaviors
-                    document.querySelectorAll('.dept-select-card').forEach(card => {
-                    card.addEventListener('click', () => {
-                      showSingleDepartment(card.getAttribute('data-dept'));
-                    });
-                  });
-                }
-
-                // Function 2: Render a specific chosen department view
-                function showSingleDepartment(deptName) {
-                  const dept = departments[deptName];
-                  if (!dept) return;
-
-                  pageTitle.textContent = deptName;
-                  pageSubtitle.textContent = "Meet the team";
-                  deptsGrid.classList.add('hidden');
-                  backBtn.classList.remove('hidden');
-                  singleDeptView.classList.remove('hidden');
-
-                  // Reusable template snippet for profile cards
-                  const generateCardHTML = (m) => `
-                    <div class="member-card relative overflow-hidden rounded-lg border border-primary/20 bg-background p-6 shadow-lg shadow-blue-500/10">
-                      <div class="flex items-center gap-4">
-                        <img src="${m.image || _defImg}" alt="${m.name}" class="h-16 w-16 rounded-full object-cover border-2 border-primary/30" onerror="this.src=_defImg">
-                        <div class="text-left">
-                          <h3 class="font-bold text-lg text-foreground">${m.name}</h3>
-                          <p class="text-sm font-medium text-primary">${m.role}</p>
-                          <p class="text-sm text-muted-foreground">Class: ${m.class}</p>
-                        </div>
-                      </div>
-                    </div>
-                  `;
-
-                  // Render head structure slot
-                  if (dept.head) {
-                    headContainer.innerHTML = generateCardHTML(dept.head);
-                  } else {
-                    headContainer.innerHTML = '<p class="text-muted-foreground text-sm py-4">No Department Head assigned yet.</p>';
-                  }
-
-                  // Render underlying active team cards
-                  let membersHtml = '';
-                  dept.members.forEach(m => { membersHtml += generateCardHTML(m); });
-                  membersGrid.innerHTML = membersHtml || '<p class="text-muted-foreground text-center col-span-full py-6">No core team members registered under this division.</p>';
-                }
-
-                // Bind reverse flow button
-                backBtn.addEventListener('click', showDepartmentsList);
-        
-                // Kick off initialization
-                showDepartmentsList();
+                                departmentsList.innerHTML = orderedDepartments.length
+                                    ? orderedDepartments.map(([deptName, dept]) => generateDepartmentSectionHTML(deptName, dept)).join('')
+                                    : '<div class="text-center py-12 text-muted-foreground">No departments found.</div>';
 
               } catch (error) {
                 console.error(error);
-                deptsGrid.innerHTML = `<div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-12 text-destructive">Error loading members view.</div>`;
+                                departmentsList.innerHTML = `<div class="text-center py-12 text-destructive">Error loading members view.</div>`;
               }
             });
           </script>

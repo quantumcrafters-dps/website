@@ -239,6 +239,9 @@
         </nav>
 
         <section class="container mx-auto px-4 py-20 min-h-[60vh] flex flex-col items-center justify-center relative">
+            <div id="static-mode-prank" class="w-full max-w-3xl hidden bg-red-500/15 border-4 border-red-500 text-red-500 p-8 md:p-12 rounded-3xl text-center shadow-2xl">
+                <div class="text-4xl md:text-7xl font-black uppercase tracking-widest leading-tight">You should not be here bache</div>
+            </div>
             
             <div id="passcode-screen" class="w-full max-w-md bg-background border border-border/40 p-8 rounded-xl shadow-2xl text-center fade-in">
                 <div class="mb-6">
@@ -264,8 +267,8 @@
                     </button>
                 </div>
                 
-                <div id="api-error" class="bg-red-500/10 border border-red-500/50 text-red-500 p-4 rounded-lg mb-6 hidden">
-                    Failed to connect to the Render API server.
+                <div id="api-error" class="bg-red-500/15 border-2 border-red-500 text-red-500 p-6 rounded-2xl mb-6 hidden text-center">
+                    <div class="text-3xl md:text-5xl font-black uppercase tracking-widest">You should not be here bache</div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -306,11 +309,6 @@
                             <label class="block text-sm font-medium mb-1 text-muted-foreground">Full Name</label>
                             <input type="text" id="member-name" required class="w-full px-4 py-2 bg-white border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-black placeholder:text-gray-400">
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium mb-1 text-muted-foreground">Role Tag</label>
-                            <input type="text" id="member-role" required list="role-suggestions" class="w-full px-4 py-2 bg-white border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-black placeholder:text-gray-400" placeholder="e.g. Developer or enter a new tag">
-                            <datalist id="role-suggestions"></datalist>
-                        </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium mb-1 text-muted-foreground">Class</label>
@@ -324,7 +322,7 @@
                         <div>
                             <label class="block text-sm font-medium mb-1 text-muted-foreground">Department</label>
                             <select id="member-department" required class="w-full px-4 py-2 bg-white border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-black">
-                                <option value="Coordination Department">Coorodination Department</option>
+                                <option value="none">None Department</option>
                                 <option value="Tech Department">Tech Department</option>
                                 <option value="Graphics Department">Graphics Department</option>
                                 <option value="Planning and Management Department">Planning and Management Department</option>
@@ -332,9 +330,18 @@
                             </select>
                         </div>
 
-                        <div class="flex items-center gap-2 pt-1">
+                        <div id="member-head-field" class="flex items-center gap-2 pt-1">
                             <input type="checkbox" id="member-is-head" class="h-4 w-4 rounded border-border bg-white text-primary focus:ring-primary">
                             <label for="member-is-head" class="text-sm font-medium text-muted-foreground">Is this person the Department Head?</label>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium mb-1 text-muted-foreground">Club Leadership Position</label>
+                            <select id="member-club-role" class="w-full px-4 py-2 bg-white border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-black">
+                                <option value="none">None</option>
+                                <option value="president">President</option>
+                                <option value="vice-president">Vice President</option>
+                            </select>
                         </div>
                         
                         <div>
@@ -363,10 +370,65 @@
             let globalMembersData = { current_members: [], past_members: [] };
             const DEFAULT_MEMBER_IMG = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg fill="#999" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 15.503A5.041 5.041 0 1 0 16 5.42a5.041 5.041 0 0 0 0 10.083zm0 2.215c-6.703 0-11 3.699-11 5.5v3.363h22v-3.363c0-2.178-4.068-5.5-11-5.5z"/></svg>');
 
-            // ---- Render Server URLs ----
-            const BASE_URL = 'https://backend-website-271o.onrender.com';
+            // ---- Server URLs ----
+            const BASE_URL = window.location.protocol === 'file:' ? 'http://localhost:8000' : window.location.origin;
             const API_URL = `${BASE_URL}/api/members`;
             const UPLOAD_URL = `${BASE_URL}/api/upload`;
+            const ADMIN_PASSCODES = new Set(['admin123', 'quantum2026']);
+
+            function normalizeDepartment(department) {
+                if (!department || department === 'none' || department === 'Coordination Department') {
+                    return '';
+                }
+                return department;
+            }
+
+            function updateDepartmentHeadVisibility() {
+                const departmentSelect = document.getElementById('member-department');
+                const headField = document.getElementById('member-head-field');
+                const headCheckbox = document.getElementById('member-is-head');
+                const shouldHide = departmentSelect.value === 'none';
+
+                headField.classList.toggle('hidden', shouldHide);
+                headCheckbox.disabled = shouldHide;
+
+                if (shouldHide) {
+                    headCheckbox.checked = false;
+                }
+            }
+
+            function showServerPrankError(message) {
+                const apiError = document.getElementById('api-error');
+                apiError.innerHTML = `
+                    <div class="text-3xl md:text-5xl font-black uppercase tracking-widest">${message}</div>
+                `;
+                apiError.classList.remove('hidden');
+            }
+
+            function showStaticModePrank() {
+                document.getElementById('static-mode-prank').classList.remove('hidden');
+                document.getElementById('passcode-screen').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.add('hidden');
+            }
+
+            function getMemberDisplayLabel(member) {
+                const labels = [];
+                const legacyRole = (member.role || '').toLowerCase();
+                const clubRole = member.club_role || (legacyRole.includes('vice-president') ? 'vice-president' : legacyRole.includes('president') ? 'president' : 'none');
+
+                if (clubRole === 'president') {
+                    labels.push('President');
+                } else if (clubRole === 'vice-president') {
+                    labels.push('Vice President');
+                }
+
+                const department = normalizeDepartment(member.department);
+                if (department) {
+                    labels.push(member.is_head ? `Head of ${department}` : department);
+                }
+
+                return labels.join(' • ');
+            }
 
             // ---- Passcode Logic ----
             async function checkPasscode() {
@@ -379,13 +441,12 @@
                 errorMsg.classList.add('hidden');
 
                 try {
-                    const response = await fetch(`${BASE_URL}/api/verify-passcode`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ passcode: code })
-                    });
+                    if (ADMIN_PASSCODES.has(code)) {
+                        const serverCheck = await fetch(API_URL, { method: 'GET' });
+                        if (!serverCheck.ok) {
+                            throw new Error('API server is unavailable');
+                        }
 
-                    if (response.ok) {
                         document.getElementById('passcode-screen').classList.add('hidden');
                         document.getElementById('admin-dashboard').classList.remove('hidden');
                         document.title = 'Admin Dashboard - Quantum Crafters';
@@ -396,7 +457,7 @@
                     }
                 } catch (error) {
                     console.error("Login Error:", error);
-                    errorMsg.textContent = "Server offline. Is Render awake?";
+                    errorMsg.innerHTML = '<span class="text-3xl md:text-5xl font-black uppercase tracking-widest block">You should not be here bache</span>';
                     errorMsg.classList.remove('hidden');
                 } finally {
                     btn.textContent = "Unlock";
@@ -415,6 +476,12 @@
                 if (e.key === 'Enter') checkPasscode();
             });
 
+            document.getElementById('member-department').addEventListener('change', updateDepartmentHeadVisibility);
+
+            if (window.location.protocol === 'file:') {
+                showStaticModePrank();
+            }
+
             // ---- API Data Logic ----
             async function fetchMembers() {
                 const errBox = document.getElementById('api-error');
@@ -425,7 +492,7 @@
                     errBox.classList.add('hidden');
                     renderMembers();
                 } catch (e) {
-                    errBox.classList.remove('hidden');
+                    showServerPrankError('You should not be here bache');
                 }
             }
 
@@ -457,7 +524,8 @@
                             <img src="${m.image || DEFAULT_MEMBER_IMG}" class="w-12 h-12 rounded-full object-cover border-2 border-primary/20" onerror="this.src=DEFAULT_MEMBER_IMG">
                             <div>
                                 <p class="font-medium flex items-center gap-2">${m.name}</p>
-                                <p class="text-xs text-muted-foreground">${m.role} &bull; ${m.class} &bull; ${m.year}</p>
+                                ${getMemberDisplayLabel(m) ? `<p class="text-xs text-muted-foreground">${getMemberDisplayLabel(m)}</p>` : ''}
+                                <p class="text-xs text-muted-foreground">${m.class} &bull; ${m.year}</p>
                             </div>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
@@ -475,7 +543,8 @@
                             <img src="${m.image || DEFAULT_MEMBER_IMG}" class="w-12 h-12 rounded-full object-cover grayscale border-2 border-border" onerror="this.src=DEFAULT_MEMBER_IMG">
                             <div>
                                 <p class="font-medium line-through decoration-muted-foreground/50">${m.name}</p>
-                                <p class="text-xs text-muted-foreground">${m.role} &bull; ${m.class} &bull; ${m.year}</p>
+                                ${getMemberDisplayLabel(m) ? `<p class="text-xs text-muted-foreground">${getMemberDisplayLabel(m)}</p>` : ''}
+                                <p class="text-xs text-muted-foreground">${m.class} &bull; ${m.year}</p>
                             </div>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
@@ -486,14 +555,6 @@
                     </div>
                 `).join('') || '<div class="text-center py-8 text-muted-foreground">No past members.</div>';
                 
-                const roles = new Set();
-                globalMembersData.current_members.forEach(m => roles.add(m.role));
-                globalMembersData.past_members.forEach(m => roles.add(m.role));
-                const datalist = document.getElementById('role-suggestions');
-                if (datalist) {
-                    datalist.innerHTML = Array.from(roles).filter(Boolean).map(role => `<option value="${role}">`).join('');
-                }
-
                 if(window.lucide) lucide.createIcons();
             }
 
@@ -530,6 +591,7 @@
                 document.getElementById('edit-list-type').value = listType;
                 document.getElementById('modal-title').textContent = 'Add New Member';
                 clearDropzone();
+                updateDepartmentHeadVisibility();
                 
                 document.getElementById('member-modal').classList.remove('hidden');
                 document.getElementById('member-modal').classList.add('flex');
@@ -550,11 +612,12 @@
                 document.getElementById('modal-title').textContent = 'Edit Member Details';
                 
                 document.getElementById('member-name').value = member.name;
-                document.getElementById('member-role').value = member.role;
                 document.getElementById('member-class').value = member.class;
                 document.getElementById('member-year').value = member.year;
-                document.getElementById('member-department').value = member.department;
+                document.getElementById('member-department').value = normalizeDepartment(member.department) || 'none';
                 document.getElementById('member-is-head').checked = member.is_head;
+                document.getElementById('member-club-role').value = member.club_role || 'none';
+                updateDepartmentHeadVisibility();
                 
                 if(member.image) {
                     setDropzonePreview(member.image);
@@ -609,22 +672,22 @@
                     const member = list.find(m => m.id === editId);
                     if (member) {
                         member.name = document.getElementById('member-name').value;
-                        member.role = document.getElementById('member-role').value;
                         member.class = document.getElementById('member-class').value;
                         member.year = document.getElementById('member-year').value;
                         member.department = document.getElementById('member-department').value;
                         member.is_head = document.getElementById('member-is-head').checked;
+                        member.club_role = document.getElementById('member-club-role').value;
                         member.image = finalImagePath;
                     }
                 } else {
                     list.push({
                         id: Date.now().toString(),
                         name: document.getElementById('member-name').value,
-                        role: document.getElementById('member-role').value,
                         class: document.getElementById('member-class').value,
                         year: document.getElementById('member-year').value,
                         department: document.getElementById('member-department').value,
                         is_head: document.getElementById('member-is-head').checked,
+                        club_role: document.getElementById('member-club-role').value,
                         image: finalImagePath
                     });
                 }

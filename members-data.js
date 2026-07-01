@@ -3,64 +3,70 @@
 window.MEMBERS_DATA = {
   "current_members": [
     {
-      "id": "1782903660616",
+      "id": "1773588931226",
       "name": "Anuj Prakash",
-      "role": "President",
+      "role": "Council Member",
       "class": "12-G",
       "year": "2026-27",
+      "image": "public/anuj-prakash-1773595233933.jpg",
       "department": "Coordination Department",
       "is_head": true,
-      "image": "public/anuj-prakash-1773595233933.jpg"
+      "club_role": "president"
     },
     {
-      "id": "1782903673754",
+      "id": "1773674837523",
       "name": "Nabeel Jami",
-      "role": "Vice-President",
+      "role": "Council Member",
       "class": "12-F",
       "year": "2026-27",
+      "image": "public/nabeel-jami-1773674837182.jpg",
       "department": "Tech Department",
       "is_head": true,
-      "image": "public/nabeel-jami-1773674837182.jpg"
+      "club_role": "vice-president"
     },
     {
-      "id": "1782903697424",
+      "id": "1777468344000",
       "name": "Pranjal Sinha",
       "role": "Vice-President",
       "class": "12-F",
       "year": "2026-27",
-      "department": "Coordination Department",
+      "image": "public/Pranjal.jpeg",
+      "department": "none",
       "is_head": false,
-      "image": "public/Pranjal.jpeg"
+      "club_role": "vice-president"
     },
     {
-      "id": "1782903722008",
+      "id": "1777468355000",
       "name": "Atharva Singh",
       "role": "Head of Management",
       "class": "12-F",
       "year": "2026-27",
+      "image": "public/Atharva.jpeg",
       "department": "Planning and Management Department",
       "is_head": true,
-      "image": "public/Atharva.jpeg"
+      "club_role": "none"
     },
     {
-      "id": "1782903740405",
+      "id": "1777468366000",
       "name": "Pratiksha Bharadwaj",
       "role": "Head of Graphics",
       "class": "12-G",
       "year": "2026-27",
+      "image": "public/Pratiksha.jpeg",
       "department": "Graphics Department",
       "is_head": true,
-      "image": "public/Pratiksha.jpeg"
+      "club_role": "none"
     },
     {
-      "id": "1782903758502",
+      "id": "1777468377000",
       "name": "Tanvi",
       "role": "Head of PR & Social Media",
       "class": "12-H",
       "year": "2026-27",
+      "image": "public/Tanvi.jpeg",
       "department": "Social Media Department",
       "is_head": true,
-      "image": "public/Tanvi.jpeg"
+      "club_role": "none"
     }
   ],
   "past_members": [
