@@ -110,6 +110,22 @@ def rewrite_admin():
                                 <input type="text" id="member-year" required class="w-full px-4 py-2 bg-secondary/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground" placeholder="e.g. 2025-2026">
                             </div>
                         </div>
+                        <!-- Department Selector -->
+                        <div>
+                                <label class="block text-sm font-medium mb-1 text-muted-foreground">Department</label>
+                                <select id="member-department" required class="w-full px-4 py-2 bg-secondary/30 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-foreground">
+                                <option value="Tech Department">Tech Department</option>
+                                <option value="Graphics Department">Graphics Department</option>
+                                <option value="Photography Department">Photography Department</option>
+                                <option value="Content Department">Content Department</option>
+                              </select>
+                        </div>
+
+                        <!-- Is Head Checkbox Selector -->
+                        <div class="flex items-center gap-2 pt-1">
+                            <input type="checkbox" id="member-is-head" class="h-4 w-4 rounded border-border bg-secondary/30 text-primary focus:ring-primary">
+                            <label for="member-is-head" class="text-sm font-medium text-muted-foreground">Is this person the Department Head?</label>
+                        </div>
                         
                         <!-- Image Dropzone -->
                         <div>
@@ -293,6 +309,8 @@ def rewrite_admin():
                 document.getElementById('member-role').value = member.role;
                 document.getElementById('member-class').value = member.class;
                 document.getElementById('member-year').value = member.year;
+                document.getElementById('member-department').value = member.department;
+                document.getElementById('member-is-head').checked = member.is_head;
                 
                 if(member.image) {
                     setDropzonePreview(member.image);
@@ -346,6 +364,8 @@ def rewrite_admin():
                         member.role = document.getElementById('member-role').value;
                         member.class = document.getElementById('member-class').value;
                         member.year = document.getElementById('member-year').value;
+                        member.department = document.getElementById('member-department').value;
+                        member.is_head = document.getElementById('member-is-head').checked;
                         member.image = finalImagePath;
                     }
                 } else {
@@ -356,6 +376,8 @@ def rewrite_admin():
                         role: document.getElementById('member-role').value,
                         class: document.getElementById('member-class').value,
                         year: document.getElementById('member-year').value,
+                        department: document.getElementById('member-department').value,
+                        is_head: document.getElementById('member-is-head').checked,
                         image: finalImagePath
                     });
                 }
