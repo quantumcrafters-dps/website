@@ -24,7 +24,6 @@
     </script>
     
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,7 +53,6 @@
             background-color: hsl(var(--background) / 1);
         }
 
-        /* --- Custom Hover Classes --- */
         .hover-plain:hover {
             color: hsl(var(--foreground)) !important;
         }
@@ -87,7 +85,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Mouse tracking effect */
         .mouse-gradient {
             background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
                     rgba(59, 130, 246, 0.15),
@@ -95,7 +92,6 @@
                     transparent 40%);
         }
 
-        /* Floating background gradients */
         .floating-gradient-1 {
             animation: float1 20s ease-in-out infinite;
         }
@@ -239,9 +235,6 @@
         </nav>
 
         <section class="container mx-auto px-4 py-20 min-h-[60vh] flex flex-col items-center justify-center relative">
-            <div id="static-mode-prank" class="w-full max-w-3xl hidden bg-red-500/15 border-4 border-red-500 text-red-500 p-8 md:p-12 rounded-3xl text-center shadow-2xl">
-                <div class="text-4xl md:text-7xl font-black uppercase tracking-widest leading-tight">You should not be here bache</div>
-            </div>
             
             <div id="passcode-screen" class="w-full max-w-md bg-background border border-border/40 p-8 rounded-xl shadow-2xl text-center fade-in">
                 <div class="mb-6">
@@ -370,11 +363,10 @@
             let globalMembersData = { current_members: [], past_members: [] };
             const DEFAULT_MEMBER_IMG = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg fill="#999" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 15.503A5.041 5.041 0 1 0 16 5.42a5.041 5.041 0 0 0 0 10.083zm0 2.215c-6.703 0-11 3.699-11 5.5v3.363h22v-3.363c0-2.178-4.068-5.5-11-5.5z"/></svg>');
 
-            // ---- Server URLs ----
-            const BASE_URL = window.location.protocol === 'file:' ? 'http://localhost:8000' : window.location.origin;
+            // ---- Render Server URLs ----
+            const BASE_URL = 'https://backend-website-271o.onrender.com';
             const API_URL = `${BASE_URL}/api/members`;
             const UPLOAD_URL = `${BASE_URL}/api/upload`;
-            const ADMIN_PASSCODES = new Set(['admin123', 'quantum2026']);
 
             function normalizeDepartment(department) {
                 if (!department || department === 'none' || department === 'Coordination Department') {
@@ -395,20 +387,6 @@
                 if (shouldHide) {
                     headCheckbox.checked = false;
                 }
-            }
-
-            function showServerPrankError(message) {
-                const apiError = document.getElementById('api-error');
-                apiError.innerHTML = `
-                    <div class="text-3xl md:text-5xl font-black uppercase tracking-widest">${message}</div>
-                `;
-                apiError.classList.remove('hidden');
-            }
-
-            function showStaticModePrank() {
-                document.getElementById('static-mode-prank').classList.remove('hidden');
-                document.getElementById('passcode-screen').classList.add('hidden');
-                document.getElementById('admin-dashboard').classList.add('hidden');
             }
 
             function getMemberDisplayLabel(member) {
@@ -441,12 +419,13 @@
                 errorMsg.classList.add('hidden');
 
                 try {
-                    if (ADMIN_PASSCODES.has(code)) {
-                        const serverCheck = await fetch(API_URL, { method: 'GET' });
-                        if (!serverCheck.ok) {
-                            throw new Error('API server is unavailable');
-                        }
+                    const response = await fetch(`${BASE_URL}/api/verify-passcode`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ passcode: code })
+                    });
 
+                    if (response.ok) {
                         document.getElementById('passcode-screen').classList.add('hidden');
                         document.getElementById('admin-dashboard').classList.remove('hidden');
                         document.title = 'Admin Dashboard - Quantum Crafters';
@@ -457,7 +436,7 @@
                     }
                 } catch (error) {
                     console.error("Login Error:", error);
-                    errorMsg.innerHTML = '<span class="text-3xl md:text-5xl font-black uppercase tracking-widest block">You should not be here bache</span>';
+                    errorMsg.innerHTML = '<span class="text-3xl md:text-5xl font-black uppercase tracking-widest block">Server offline. Is Render awake?</span>';
                     errorMsg.classList.remove('hidden');
                 } finally {
                     btn.textContent = "Unlock";
@@ -478,10 +457,6 @@
 
             document.getElementById('member-department').addEventListener('change', updateDepartmentHeadVisibility);
 
-            if (window.location.protocol === 'file:') {
-                showStaticModePrank();
-            }
-
             // ---- API Data Logic ----
             async function fetchMembers() {
                 const errBox = document.getElementById('api-error');
@@ -492,12 +467,12 @@
                     errBox.classList.add('hidden');
                     renderMembers();
                 } catch (e) {
-                    showServerPrankError('You should not be here bache');
+                    errBox.classList.remove('hidden');
                 }
             }
 
             async function saveToServer() {
-                const activePasscode = document.getElementById('passcode').value; // Get authorization token
+                const activePasscode = document.getElementById('passcode').value; 
                 try {
                     const res = await fetch(API_URL, {
                         method: 'POST',
@@ -517,11 +492,10 @@
                 const currentEl = document.getElementById('current-members-list');
                 const pastEl = document.getElementById('past-members-list');
 
-                // Current Members
                 currentEl.innerHTML = globalMembersData.current_members.map(m => `
                     <div class="flex items-center justify-between p-3 border border-border/40 rounded-xl bg-secondary/10 hover:bg-secondary/30 transition-colors group">
                         <div class="flex items-center gap-4">
-                            <img src="${m.image || DEFAULT_MEMBER_IMG}" class="w-12 h-12 rounded-full object-cover border-2 border-primary/20" onerror="this.src=DEFAULT_MEMBER_IMG">
+                            <img src="${m.image && !m.image.startsWith('http') && !m.image.startsWith('data:') ? BASE_URL + '/' + m.image : m.image || DEFAULT_MEMBER_IMG}" class="w-12 h-12 rounded-full object-cover border-2 border-primary/20" onerror="this.src=DEFAULT_MEMBER_IMG">
                             <div>
                                 <p class="font-medium flex items-center gap-2">${m.name}</p>
                                 ${getMemberDisplayLabel(m) ? `<p class="text-xs text-muted-foreground">${getMemberDisplayLabel(m)}</p>` : ''}
@@ -536,11 +510,10 @@
                     </div>
                 `).join('') || '<div class="text-center py-8 text-muted-foreground">No current members.</div>';
 
-                // Past Members
                 pastEl.innerHTML = globalMembersData.past_members.map(m => `
                     <div class="flex items-center justify-between p-3 border border-border/40 rounded-xl bg-background/50 hover:bg-secondary/20 transition-colors opacity-80 group">
                         <div class="flex items-center gap-4">
-                            <img src="${m.image || DEFAULT_MEMBER_IMG}" class="w-12 h-12 rounded-full object-cover grayscale border-2 border-border" onerror="this.src=DEFAULT_MEMBER_IMG">
+                            <img src="${m.image && !m.image.startsWith('http') && !m.image.startsWith('data:') ? BASE_URL + '/' + m.image : m.image || DEFAULT_MEMBER_IMG}" class="w-12 h-12 rounded-full object-cover grayscale border-2 border-border" onerror="this.src=DEFAULT_MEMBER_IMG">
                             <div>
                                 <p class="font-medium line-through decoration-muted-foreground/50">${m.name}</p>
                                 ${getMemberDisplayLabel(m) ? `<p class="text-xs text-muted-foreground">${getMemberDisplayLabel(m)}</p>` : ''}
@@ -558,7 +531,6 @@
                 if(window.lucide) lucide.createIcons();
             }
 
-            // ---- Action Logic ----
             async function moveMember(id, fromListStr, toListStr) {
                 const fromList = fromListStr === 'current' ? globalMembersData.current_members : globalMembersData.past_members;
                 const toList = toListStr === 'current' ? globalMembersData.current_members : globalMembersData.past_members;
@@ -584,7 +556,6 @@
                 }
             }
 
-            // ---- Form / Modal Logic ----
             function openMemberModal(listType = 'current') {
                 document.getElementById('member-form').reset();
                 document.getElementById('edit-id').value = '';
@@ -620,7 +591,11 @@
                 updateDepartmentHeadVisibility();
                 
                 if(member.image) {
-                    setDropzonePreview(member.image);
+                    let imgSrc = member.image;
+                    if (!imgSrc.startsWith('http') && !imgSrc.startsWith('data:')) {
+                        imgSrc = BASE_URL + '/' + imgSrc;
+                    }
+                    setDropzonePreview(imgSrc);
                     document.getElementById('member-img').value = member.image;
                 } else {
                     clearDropzone();
@@ -642,7 +617,6 @@
 
                 let finalImagePath = document.getElementById('member-img').value;
                 
-                // Grab passcode for secure image upload
                 const activePasscode = document.getElementById('passcode').value; 
 
                 if (finalImagePath.startsWith('data:image')) {
@@ -700,7 +674,6 @@
                 btn.disabled = false;
             }
 
-            // ---- Image Drag & Drop Logic ----
             const dropzone = document.getElementById('dropzone');
             
             function handleDragOver(e) {
