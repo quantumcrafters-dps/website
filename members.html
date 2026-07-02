@@ -39,8 +39,8 @@
     </script>
     <!--jQuery-->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- Static member data (works with file:// and any server) -->
-    <script src="members-data.js"></script>
+    
+    <!-- Static member data script tag removed since we are now fetching dynamically from MongoDB API -->
 
     <!--  Icons-->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -508,101 +508,117 @@
           </section>
         
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                            const departmentsList = document.getElementById('departments-list');
+            // Note: Changed to an async function to allow fetching from API
+            document.addEventListener('DOMContentLoaded', async () => {
+              const departmentsList = document.getElementById('departments-list');
               const leadershipSection = document.getElementById('club-leadership-section');
               const leadershipGrid = document.getElementById('club-leadership-grid');
       
+              // *** REPLACE THIS URL WITH YOUR ACTUAL RENDER BACKEND URL ***
+              const BACKEND_URL = 'https://backend-website-271o.onrender.com/';
+              const API_URL = `${BACKEND_URL}/api/members`;
+
               const _defImg = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg fill="#999" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 15.503A5.041 5.041 0 1 0 16 5.42a5.041 5.041 0 0 0 0 10.083zm0 2.215c-6.703 0-11 3.699-11 5.5v3.363h22v-3.363c0-2.178-4.068-5.5-11-5.5z"/></svg>');
 
-                            function normalizeDepartment(department) {
-                                if (!department || department === 'none' || department === 'Coordination Department') return '';
-                                return department;
-                            }
+              function normalizeDepartment(department) {
+                  if (!department || department === 'none' || department === 'Coordination Department') return '';
+                  return department;
+              }
 
-                            function getMemberLabel(member) {
-                                const labels = [];
-                                const legacyRole = (member.role || '').toLowerCase();
-                                const clubRole = member.club_role || (legacyRole.includes('vice-president') ? 'vice-president' : legacyRole.includes('president') ? 'president' : 'none');
+              function getMemberLabel(member) {
+                  const labels = [];
+                  const legacyRole = (member.role || '').toLowerCase();
+                  const clubRole = member.club_role || (legacyRole.includes('vice-president') ? 'vice-president' : legacyRole.includes('president') ? 'president' : 'none');
 
-                                if (clubRole === 'president') labels.push('President');
-                                if (clubRole === 'vice-president') labels.push('Vice President');
+                  if (clubRole === 'president') labels.push('President');
+                  if (clubRole === 'vice-president') labels.push('Vice President');
 
-                                const department = normalizeDepartment(member.department);
-                                if (department) {
-                                    labels.push(member.is_head ? `Head of ${department}` : department);
-                                }
+                  const department = normalizeDepartment(member.department);
+                  if (department) {
+                      labels.push(member.is_head ? `Head of ${department}` : department);
+                  }
 
-                                return labels.join(' • ');
-                            }
+                  return labels.join(' • ');
+              }
 
-                            function isClubLeader(member) {
-                                const legacyRole = (member.role || '').toLowerCase();
-                                return member.club_role === 'president' || member.club_role === 'vice-president' || legacyRole.includes('vice-president') || legacyRole.includes('president');
-                            }
+              function isClubLeader(member) {
+                  const legacyRole = (member.role || '').toLowerCase();
+                  return member.club_role === 'president' || member.club_role === 'vice-president' || legacyRole.includes('vice-president') || legacyRole.includes('president');
+              }
 
-                            function generateMemberCardHTML(member) {
-                                const label = getMemberLabel(member);
-                                return `
-                                        <div class="member-card relative overflow-hidden rounded-lg border border-primary/20 bg-background p-6 shadow-lg shadow-blue-500/10">
-                                            <div class="flex items-center gap-4">
-                                                <img src="${member.image || _defImg}" alt="${member.name}" class="h-16 w-16 rounded-full object-cover border-2 border-primary/30" onerror="this.src=_defImg">
-                                                <div class="text-left">
-                                                    <h3 class="font-bold text-lg text-foreground">${member.name}</h3>
-                                                    ${label ? `<p class="text-sm font-medium text-primary">${label}</p>` : ''}
-                                                    <p class="text-sm text-muted-foreground">Class: ${member.class}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `;
-                            }
+              function generateMemberCardHTML(member) {
+                  const label = getMemberLabel(member);
+                  let imgSrc = member.image || _defImg;
 
-                            function generateDepartmentSectionHTML(deptName, dept) {
-                                const headCard = dept.head ? generateMemberCardHTML(dept.head) : '<p class="text-muted-foreground text-center py-6">No Department Head assigned yet.</p>';
-                                const memberCards = dept.members.length
-                                    ? dept.members.map(member => generateMemberCardHTML(member)).join('')
-                                    : '<p class="text-muted-foreground text-center py-6">No members assigned yet.</p>';
+                  // Append backend URL if the image is saved locally on the server (e.g. public/img.jpg)
+                  if (imgSrc && !imgSrc.startsWith('http') && !imgSrc.startsWith('data:')) {
+                      imgSrc = `${BACKEND_URL}/${imgSrc.replace(/^\//, '')}`;
+                  }
 
-                                return `
-                                    <section class="space-y-6">
-                                        <div class="text-center space-y-2">
-                                            <!--<span class="inline-block px-4 py-1.5 bg-primary/10 text-primary font-bold rounded-full text-sm border border-primary/20 tracking-wider">DEPARTMENT</span>-->
-                                            <h2 class="text-3xl font-bold text-foreground">${deptName}</h2>
-                                        </div>
+                  return `
+                          <div class="member-card relative overflow-hidden rounded-lg border border-primary/20 bg-background p-6 shadow-lg shadow-blue-500/10">
+                              <div class="flex items-center gap-4">
+                                  <img src="${imgSrc}" alt="${member.name}" class="h-16 w-16 rounded-full object-cover border-2 border-primary/30" onerror="this.src=_defImg">
+                                  <div class="text-left">
+                                      <h3 class="font-bold text-lg text-foreground">${member.name}</h3>
+                                      ${label ? `<p class="text-sm font-medium text-primary">${label}</p>` : ''}
+                                      <p class="text-sm text-muted-foreground">Class: ${member.class}</p>
+                                  </div>
+                              </div>
+                          </div>
+                      `;
+              }
 
-                                        <div class="space-y-4">
-                                            <div class="text-center">
-                                                <span class="inline-block px-4 py-1.5 bg-primary/10 text-primary font-bold rounded-full text-sm border border-primary/20 mb-4 tracking-wider">DEPARTMENT HEAD</span>
-                                                <div class="flex justify-center">${headCard}</div>
-                                            </div>
+              function generateDepartmentSectionHTML(deptName, dept) {
+                  const headCard = dept.head ? generateMemberCardHTML(dept.head) : '<p class="text-muted-foreground text-center py-6">No Department Head assigned yet.</p>';
+                  const memberCards = dept.members.length
+                      ? dept.members.map(member => generateMemberCardHTML(member)).join('')
+                      : '<p class="text-muted-foreground text-center py-6">No members assigned yet.</p>';
 
-                                            <hr class="border-border/40 max-w-xl mx-auto">
+                  return `
+                      <section class="space-y-6">
+                          <div class="text-center space-y-2">
+                              <!--<span class="inline-block px-4 py-1.5 bg-primary/10 text-primary font-bold rounded-full text-sm border border-primary/20 tracking-wider">DEPARTMENT</span>-->
+                              <h2 class="text-3xl font-bold text-foreground">${deptName}</h2>
+                          </div>
 
-                                            <div>
-                                                <h3 class="text-center text-xl font-semibold text-muted-foreground mb-8">Team Members</h3>
-                                                <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">${memberCards}</div>
-                                            </div>
-                                        </div>
-                                    </section>
-                                `;
-                            }
+                          <div class="space-y-4">
+                              <div class="text-center">
+                                  <span class="inline-block px-4 py-1.5 bg-primary/10 text-primary font-bold rounded-full text-sm border border-primary/20 mb-4 tracking-wider">DEPARTMENT HEAD</span>
+                                  <div class="flex justify-center">${headCard}</div>
+                              </div>
+
+                              <hr class="border-border/40 max-w-xl mx-auto">
+
+                              <div>
+                                  <h3 class="text-center text-xl font-semibold text-muted-foreground mb-8">Team Members</h3>
+                                  <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">${memberCards}</div>
+                              </div>
+                          </div>
+                      </section>
+                  `;
+              }
 
               try {
-                const data = window.MEMBERS_DATA;
-                if (!data) throw new Error('members-data.js not loaded');
+                // Fetch members data from API
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                
+                const data = await response.json();
                 const rawMembers = data.current_members || [];
 
                 if (rawMembers.length === 0) {
-                                    departmentsList.innerHTML = '<div class="text-center py-12 text-muted-foreground">No members found.</div>';
+                    departmentsList.innerHTML = '<div class="text-center py-12 text-muted-foreground">No members found.</div>';
                   return;
                 }
 
-                                // Group the members array by department dynamically!
+                // Group the members array by department dynamically
                 const departments = {};
-                                const clubLeadership = rawMembers.filter(isClubLeader);
+                const clubLeadership = rawMembers.filter(isClubLeader);
+                
                 rawMembers.forEach(m => {
-                                    const dName = normalizeDepartment(m.department);
-                                    if (!dName) return;
+                  const dName = normalizeDepartment(m.department);
+                  if (!dName) return;
                   if (!departments[dName]) {
                     departments[dName] = { head: null, members: [] };
                   }
@@ -613,20 +629,20 @@
                   }
                 });
 
-                                const orderedDepartments = Object.entries(departments).sort(([a], [b]) => a.localeCompare(b));
+                const orderedDepartments = Object.entries(departments).sort(([a], [b]) => a.localeCompare(b));
 
-                                leadershipSection.classList.toggle('hidden', clubLeadership.length === 0);
-                                leadershipGrid.innerHTML = clubLeadership.length
-                                    ? clubLeadership.map(m => generateMemberCardHTML(m)).join('')
-                                    : '';
+                leadershipSection.classList.toggle('hidden', clubLeadership.length === 0);
+                leadershipGrid.innerHTML = clubLeadership.length
+                    ? clubLeadership.map(m => generateMemberCardHTML(m)).join('')
+                    : '';
 
-                                departmentsList.innerHTML = orderedDepartments.length
-                                    ? orderedDepartments.map(([deptName, dept]) => generateDepartmentSectionHTML(deptName, dept)).join('')
-                                    : '<div class="text-center py-12 text-muted-foreground">No departments found.</div>';
+                departmentsList.innerHTML = orderedDepartments.length
+                    ? orderedDepartments.map(([deptName, dept]) => generateDepartmentSectionHTML(deptName, dept)).join('')
+                    : '<div class="text-center py-12 text-muted-foreground">No departments found.</div>';
 
               } catch (error) {
-                console.error(error);
-                                departmentsList.innerHTML = `<div class="text-center py-12 text-destructive">Error loading members view.</div>`;
+                console.error("Failed to load members:", error);
+                departmentsList.innerHTML = `<div class="text-center py-12 text-destructive">Error loading members view. Check console for details.</div>`;
               }
             });
           </script>
